@@ -10,16 +10,14 @@ graph split into the top, middle, and bottom thirds of students by final
 course grade.
 
 """
+#--- User Inputs --------------------------------------------------
+#Which of the state versions are you using?
+#Select one of: 3, 6, or 9
+stateN = 3
 
-#Input file names
+#Input file names for grades and LASSO (cluster data is defined by state)
 grade_input_file_name = 'deidentified_course_grades.csv'
 lasso_input_file_name = 'ClusterDataMoreStates/lasso.csv'
-state_input_file_name = 'ClusterDataMoreStates/9states.csv'
-state_num_tag         = "nineStates"
-output_file_name      = "ClusterDataMoreStates/Figures/PCoords9States.png"
-
-#Number of states
-stateN = 9
 
 #Number of total modules
 moduleN = 10
@@ -28,10 +26,10 @@ moduleN = 10
 Cutoff_Trans = 0.5
 Cutoff_Dots  = 0.5
 
+###Pre-script variables and imports#######################################
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-
 modules = ['Kinetic Energy', 'Work by a constant force',
            'Work and Kinetic Energy', 'Potential Energy',
            'When is Mechanical Energy Conserved',
@@ -43,13 +41,11 @@ modules = ['Kinetic Energy', 'Work by a constant force',
 mnames=["m1","m2","m3","m4","m5","m6","m7","m8","m9"]
 
 #Dictionaries to convert from state names to ranking values.
-#TODO: Easier way to change dict and labels for 3,6, and 9 states.
 states3_dict={
         'P':3,
         'F':2,
         'A':1
         }
-
 states6_dict={
         'ASP':6,
         'ASF':5,
@@ -58,7 +54,6 @@ states6_dict={
         'NS' :2,
         'AB' :1
         }
-
 #Note: This is the 'Order1' order.
 states9_dict={
         'BSPN':9,
@@ -71,35 +66,45 @@ states9_dict={
         'ASFB'  :2,
         'AB'  :1
         }
-
 states9_labels = ["AB","ASFB","BSPB","NS","LS","ASFN",
                        "ASPB","ASPN","BSPN"]
-
 states6_labels = ["AB","NS","LS","BSP","ASF","ASP"]
-
 states3_labels = ["A","F","P"]
-
-#Manually choose which state dict and labels to use (3,6, or 9)
-states_labels = states9_labels
-states_dict   = states9_dict
-
 tiles=[0,1,2]
-
-
-
 tile_name = {0: "Bot",
              1: "Mid",
              2: "Top"}
 
-grade_data = pd.read_csv(grade_input_file_name)
+#Define the variables that differ for different state types.
+if stateN == 3:
+    states_labels = states3_labels
+    states_dict   = states3_dict
+    state_input_file_name = 'ClusterDataMoreStates/3states.csv'
+    state_num_tag         = "threeStates"
+    output_file_name      = "ClusterDataMoreStates/Figures/PCoords3States.png"
+elif stateN == 6:
+    states_labels = states6_labels
+    states_dict   = states6_dict
+    state_input_file_name = 'ClusterDataMoreStates/6states.csv'
+    state_num_tag         = "sixStates"
+    output_file_name      = "ClusterDataMoreStates/Figures/PCoords6States.png"
+elif stateN == 9:
+    states_labels = states9_labels
+    states_dict   = states9_dict
+    state_input_file_name = 'ClusterDataMoreStates/9states.csv'
+    state_num_tag         = "nineStates"
+    output_file_name      = "ClusterDataMoreStates/Figures/PCoords9States.png"
+else:
+    print("Error: only implemented state numbers are 3, 6, and 9.")
+
 
 #Pick out the LASSO data for just this module 
 lasso_data = pd.read_csv(lasso_input_file_name)
 lasso_data = lasso_data[lasso_data['modelNames'] == state_num_tag]
-
+grade_data = pd.read_csv(grade_input_file_name)
 df_all = pd.read_csv(state_input_file_name)
 
-##### Import data sets ##################################################
+#--- Import data sets ----------------------------------------------------
 mod_count=1
 
 #List of three lists for storing data of each percentile individually.
@@ -162,7 +167,7 @@ for mname in mnames:
 
 #End of this loop: all data necessary for plotting found.
         
-##### Cluster Plotting ##########################################
+#--- Cluster Plotting -------------------------------------------------
 
 #Set up figure, ax_list to stores axes, and initialize ax_ind to index the axes.
 fig = plt.figure()
