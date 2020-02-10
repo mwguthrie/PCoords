@@ -1,0 +1,66 @@
+
+Testing new clustering
+
+```{r}
+library(tidyverse)
+library(reshape2)
+library(robustHD)  
+load("RData")
+load("clustering_9states_noND.RData")
+load("clustering_6states_noND.RData")
+load("clustering_3states_noND.RData")
+
+grade_input_file_name = "deidentified_course_grades.csv"
+#state_data <- c(clustering_3states_noND,clustering_6States_noND,clustering_9States_noND)
+mnames=c("m1","m2","m3","m4","m5","m6","m7","m8","m9","m10")
+```
+```{r}
+output_file_name_raw = "ClusterDataMoreStates/6statesraw.csv"
+    output_file_name = "ClusterDataMoreStates/6states.csv"
+```
+
+```{r}
+read.csv(grade_input_file_name,header=TRUE) %>% as.data.frame() -> GradeData
+
+#Change this part to group for other states. Currently, they are all of format "clustering_Xstates_noND"
+#TODO: Easier way to change input file
+clustering_6States_noND %>% mutate(order=Order) %>% select(userid, module, order) %>% arrange(userid,module) -> TempArrange
+```
+
+```{r}
+#TempArrange stores the score for each student on each module. Now split this data up for each module individually, AND store the difference to the next module with each.
+
+#Extract current and next module scores
+TempArrange                                      %>% mutate(nextOrder=lead(order)) %>% filter(module != "m10") -> TwoOrderDataRaw
+TempArrange %>% mutate(order=scale(order)) %>% mutate(nextOrder=lead(order)) %>% filter(module != "m10") -> TwoOrderData
+
+#Raw data for blue lines
+TwoOrderDataRaw %>% write.csv(file=output_file_name_raw,row.names=FALSE)
+TwoOrderData %>% inner_join(GradeData,by='userid') %>% arrange(final_score) %>% mutate(rank=ntile(final_score,3)) -> TwoOrderScores
+```
+
+```{r}
+#Heirarchical clustering
+OutputData<-data.frame()
+mnum=1
+#Save each percentile
+while(mnum <= 9){
+  tile=1
+  while(tile <=3){
+    TwoOrderScores %>% filter(rank==tile,module==mnames[mnum]) -> TwoOrderTile
+    TwoOrderTile %>% select(order,nextOrder) %>% dist(method="euclidean") %>% hclust(method="complete") %>% cutree(h=0.02) ->group
+    if(tile==1 & mnum==1)
+    {
+      TwoOrderTile %>% select(userid, module, rank) %>% add_column(Cluster=group) %>% inner_join(TwoOrderDataRaw,by=c("userid","module")) -> OutputData
+    }
+    else
+    {
+      TwoOrderTile %>% select(userid, module, rank) %>% add_column(Cluster=group) %>% 
+        inner_join(TwoOrderDataRaw,by=c("userid","module")) %>% bind_rows(OutputData) ->OutputData
+    }
+    tile=tile+1
+  }
+  mnum=mnum+1
+}
+OutputData %>% write.csv(file=output_file_name,row.names=FALSE)
+```
