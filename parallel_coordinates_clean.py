@@ -13,7 +13,7 @@ course grade.
 #--- User Inputs --------------------------------------------------
 #Which of the state versions are you using?
 #Select one of: 3, 6, or 9
-stateN = 6
+stateN = 3
 
 #Input file names for grades and LASSO (cluster data is defined by state)
 grade_input_file_name = 'deidentified_course_grades.csv'
@@ -38,6 +38,7 @@ modules = ['Kinetic Energy', 'Work by a constant force',
            'Problems with Two Types of Potential Energy', 
            'Mechanical Energy and Non-Conservative Work',
            'More mechanical energy problems']
+
 mnames=["m1","m2","m3","m4","m5","m6","m7","m8","m9"]
 
 #Dictionaries to convert from state names to ranking values.
@@ -81,19 +82,19 @@ if stateN == 3:
     states_dict   = states3_dict
     state_input_file_name = 'ClusterDataMoreStates/3states.csv'
     state_num_tag         = "threeStates"
-    output_file_name      = "ClusterDataMoreStates/Figures/PCoords3States.png"
+    output_file_name      = "ClusterDataMoreStates/Figures/PCoords3States.pdf"
 elif stateN == 6:
     states_labels = states6_labels
     states_dict   = states6_dict
     state_input_file_name = 'ClusterDataMoreStates/6states.csv'
     state_num_tag         = "sixStates"
-    output_file_name      = "ClusterDataMoreStates/Figures/PCoords6States.png"
+    output_file_name      = "ClusterDataMoreStates/Figures/PCoords6States.pdf"
 elif stateN == 9:
     states_labels = states9_labels
     states_dict   = states9_dict
     state_input_file_name = 'ClusterDataMoreStates/9states.csv'
     state_num_tag         = "nineStates"
-    output_file_name      = "ClusterDataMoreStates/Figures/PCoords9States.png"
+    output_file_name      = "ClusterDataMoreStates/Figures/PCoords9States.pdf"
 else:
     print("Error: only implemented state numbers are 3, 6, and 9.")
 
@@ -260,14 +261,25 @@ for row in np.arange(0,3):
             #If not significant, make it hollow, otherwise it's full.
             if lasso_tuple['p'] > 0.05:
                 fill_type='none'
+                linestyle = ":"
             else:
                 fill_type='full'
+                linestyle = "-"
             state_rank = states_dict[lasso_tuple['statename']]
             dot_color = "#7570b3" if lasso_tuple['e'] < 0 else "#1b9e77"
-            ax_list[ax_ind].plot([0.02],[state_rank],
+            ax_list[ax_ind].plot([0.001],[state_rank],
                        color=dot_color,
                        fillstyle=fill_type,
                        markersize=7,
+                       alpha=0.85,
+                       linestyle=linestyle,
+                       marker='o')
+            ax_list[ax_ind-1].plot([0.999],[state_rank],
+                       color=dot_color,
+                       fillstyle=fill_type,
+                       markersize=7,
+                       alpha=0.85,
+                       linestyle=linestyle,
                        marker='o')
             
         #Catch for m10, since we'll never actually reach it otherwise. After
@@ -279,14 +291,18 @@ for row in np.arange(0,3):
                 #If not significant, make it hollow, otherwise it's full.
                 if lasso_tuple['p'] > 0.05:
                     fill_type='none'
+                    linestyle = ":"
                 else:
                     fill_type='full'
+                    linestyle = "-"
                 state_rank = states_dict[lasso_tuple['statename']]
                 dot_color = "#7570b3" if lasso_tuple['e'] < 0 else "#1b9e77"
-                ax_list[ax_ind].plot([0.98],[state_rank],
+                ax_list[ax_ind].plot([0.999],[state_rank],
                            color=dot_color,
                            markersize=7,
+                           alpha=0.85,
                            fillstyle=fill_type,
+                           linestyle=linestyle,
                            marker='o')
         
         #Now plot the rankings
