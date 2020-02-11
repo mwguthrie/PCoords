@@ -13,7 +13,7 @@ course grade.
 #--- User Inputs --------------------------------------------------
 #Which of the state versions are you using?
 #Select one of: 3, 6, or 9
-stateN = 3
+stateN = 6
 
 #Input file names for grades and LASSO (cluster data is defined by state)
 grade_input_file_name = 'deidentified_course_grades.csv'
@@ -271,16 +271,15 @@ for row in np.arange(0,3):
                        color=dot_color,
                        fillstyle=fill_type,
                        markersize=7,
-                       alpha=0.85,
                        linestyle=linestyle,
                        marker='o')
-            ax_list[ax_ind-1].plot([0.999],[state_rank],
-                       color=dot_color,
-                       fillstyle=fill_type,
-                       markersize=7,
-                       alpha=0.85,
-                       linestyle=linestyle,
-                       marker='o')
+            if ax_ind>0:
+                ax_list[ax_ind-1].plot([0.999],[state_rank],
+                           color=dot_color,
+                           fillstyle=fill_type,
+                           markersize=7,
+                           linestyle=linestyle,
+                           marker='o')
             
         #Catch for m10, since we'll never actually reach it otherwise. After
         #doing the dots for module 9, do the dots for module 10.
@@ -300,7 +299,6 @@ for row in np.arange(0,3):
                 ax_list[ax_ind].plot([0.999],[state_rank],
                            color=dot_color,
                            markersize=7,
-                           alpha=0.85,
                            fillstyle=fill_type,
                            linestyle=linestyle,
                            marker='o')
@@ -326,7 +324,7 @@ for row in np.arange(0,3):
                        linewidth=stateHubs.loc[state]['N']*0.6)
                 Current_Highlight2+=stateHubs.loc[state]['N']"""
         
-        
+        #Shoddily add labels to gloabl coordinate system
         if col == 4 and row == 2:
             plt.title('Global parallel coordinates plot title', fontsize = 22)
         if col == 4 and row == 0:
