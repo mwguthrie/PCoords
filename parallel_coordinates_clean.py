@@ -13,7 +13,7 @@ course grade.
 #--- User Inputs --------------------------------------------------
 #Which of the state versions are you using?
 #Select one of: 3, 6, or 9
-stateN = 3
+stateN = 6
 
 #Input file names for grades and LASSO (cluster data is defined by state)
 grade_input_file_name = 'deidentified_course_grades.csv'
@@ -47,9 +47,9 @@ states3_dict={
         'A':1
         }
 states6_dict={
-        'ASP':6,
-        'ASF':5,
-        'BSP':4,
+        'BSP':6,
+        'ASP':5,
+        'ASF':4,
         'LS' :3,
         'NS' :2,
         'AB' :1
@@ -68,7 +68,7 @@ states9_dict={
         }
 states9_labels = ["AB","ASFB","BSPB","NS","LS","ASFN",
                        "ASPB","ASPN","BSPN"]
-states6_labels = ["AB","NS","LS","BSP","ASF","ASP"]
+states6_labels = ["AB","NS","LS","ASF","ASP","BSP"]
 states3_labels = ["A","F","P"]
 tiles=[0,1,2]
 tile_name = {0: "Bot",
