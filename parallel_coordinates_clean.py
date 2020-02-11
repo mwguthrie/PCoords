@@ -327,8 +327,15 @@ for row in np.arange(0,3):
                 Current_Highlight2+=stateHubs.loc[state]['N']"""
         
         
+        if col == 4 and row == 2:
+            plt.title('Global parallel coordinates plot title', fontsize = 22)
+        if col == 4 and row == 0:
+            plt.xlabel('Module Number', fontsize = 14, labelpad=20)
+        if col == 0 and row == 1:
+            plt.ylabel('States', fontsize = 14, labelpad=15)
         ax_ind=ax_ind+1
 
 #Save and print a message
+    
 plt.savefig(output_file_name, bbox_inches='tight', dpi=250)       
 plt.close()
