@@ -188,8 +188,8 @@ for row in np.arange(0,3):
         #clusters and inividual students, respectively.
         clusters=Cluster_Data[row][col]
         students = df_all[(df_all['rank']==tiles[row]) & (df_all['module']==mnames[col])]
-        #students=df_all[df_all['rank']==tiles[row]]
-        #students=students[students['module']==mnames[col]]
+        students=df_all[df_all['rank']==tiles[row]]
+        students=students[students['module']==mnames[col]]
         
         #Number of students per percentile
         GroupSize=clusters['N'].sum(0)
@@ -200,12 +200,14 @@ for row in np.arange(0,3):
         #Place this particular axis
         #Each subplot takes up 10% of the figure horizontally and 25% of the
         #figure vertically, with some white space left.
-        ax_list.append(fig.add_axes([0.05 + 0.1*col,0.1+0.27*row,.1,.25],xticklabels=[],yticklabels=[],xlim=(0,1),ylim=(0.5,stateN+0.5)))
+        ax_list.append(fig.add_axes([0.05 + 0.1*col,0.1+0.27*row,.1,.25],
+                                    xticklabels=[],
+                                    yticklabels=[],xlim=(0,1),ylim=(0.5,stateN+0.5)))
         
         # Customize the major grid
         ax_list[ax_ind].set_yticks(np.arange(1,stateN+1,step=1))
         ax_list[ax_ind].grid(which='major',axis='y',color='gray',alpha=0.2)
-        ax_list[ax_ind].set_axisbelow(True)
+        ax_list[ax_ind].set_axisbelow(False)
         
         # Turn off the display of all ticks.
         ax_list[ax_ind].tick_params(which='both',
@@ -259,9 +261,14 @@ for row in np.arange(0,3):
         for lasso_ind in lasso_data_mod.index:
             lasso_tuple = lasso_data.loc[lasso_ind]
             #If not significant, make it hollow, otherwise it's full.
-            if lasso_tuple['p'] > 0.05:
+            if lasso_tuple['p'] >= 0.05:
                 fill_type='none'
-                linestyle = ":"
+                marker = 'o'
+#                linestyle = ":"
+            if lasso_tuple['p'] < 0.05:
+                marker = '*'
+            if lasso_tuple['p'] < 0.01:
+                marker = 'D'
             else:
                 fill_type='full'
                 linestyle = "-"
@@ -272,14 +279,14 @@ for row in np.arange(0,3):
                        fillstyle=fill_type,
                        markersize=7,
                        linestyle=linestyle,
-                       marker='o')
+                       marker=marker)
             if col>0:
                 ax_list[ax_ind-1].plot([0.999],[state_rank],
                            color=dot_color,
                            fillstyle=fill_type,
                            markersize=7,
                            linestyle=linestyle,
-                           marker='o')
+                           marker=marker)
             
         #Catch for m10, since we'll never actually reach it otherwise. After
         #doing the dots for module 9, do the dots for module 10.
@@ -301,9 +308,10 @@ for row in np.arange(0,3):
                            markersize=7,
                            fillstyle=fill_type,
                            linestyle=linestyle,
-                           marker='o')
+                           marker=marker)
         
         #Now plot the rankings
+        
         
         
         #This plots all "hubs," or just the largest clusters (instead of transitions).
@@ -332,8 +340,13 @@ for row in np.arange(0,3):
         if col == 0 and row == 1:
             plt.ylabel('States', fontsize = 14, labelpad=15)
         ax_ind=ax_ind+1
-
+        
+        if col==8 and row == 0 and stateN != 6:
+            plt.text(0.95,.16, '10')
+        if col==8 and row == 0 and stateN == 6:
+            plt.text(0.95,-.21, '10')
+        
 #Save and print a message
-    
+
 plt.savefig(output_file_name, bbox_inches='tight', dpi=250)       
 plt.close()
