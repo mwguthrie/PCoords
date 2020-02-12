@@ -13,7 +13,7 @@ course grade.
 #--- User Inputs --------------------------------------------------
 #Which of the state versions are you using?
 #Select one of: 3, 6, or 9
-stateN = 6
+stateN = 9
 
 #Input file names for grades and LASSO (cluster data is defined by state)
 grade_input_file_name = 'deidentified_course_grades.csv'
@@ -273,7 +273,7 @@ for row in np.arange(0,3):
                        markersize=7,
                        linestyle=linestyle,
                        marker='o')
-            if ax_ind>0:
+            if col>0:
                 ax_list[ax_ind-1].plot([0.999],[state_rank],
                            color=dot_color,
                            fillstyle=fill_type,
