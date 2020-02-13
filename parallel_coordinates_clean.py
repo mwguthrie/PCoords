@@ -216,13 +216,15 @@ for row in np.arange(0,3):
                         right='off',  # turn off right ticks
                         bottom='off') # turn off bottom ticks
         
-        #If a leftmost-side figure, add labels
+        #If a leftmost-side figure, add y-labels
         if col == 0:
             ax_list[ax_ind].set_yticklabels(states_labels)
+        #If a bottom-row figure, add x-labels.
         if row == 0:
             ax_list[ax_ind].text(0.0, -0.1, col+1, horizontalalignment='center',
                    verticalalignment='center', transform=ax_list[ax_ind].transAxes)
-            if col == stateN-1:
+            #Particular catch for module 10, which we plot along with module 9's data.
+            if col == moduleN - 2:
                 ax_list[ax_ind].text(1.0, -0.1, col+2, horizontalalignment='center',
                    verticalalignment='center', transform=ax_list[ax_ind].transAxes) 
         
@@ -332,7 +334,7 @@ for row in np.arange(0,3):
                        linewidth=stateHubs.loc[state]['N']*0.6)
                 Current_Highlight2+=stateHubs.loc[state]['N']"""
         
-        #Shoddily add labels to gloabl coordinate system
+        #Shoddily add labels to global coordinate system
         if col == 4 and row == 2:
             plt.title('Global parallel coordinates plot title', fontsize = 22)
         if col == 4 and row == 0:
@@ -340,13 +342,7 @@ for row in np.arange(0,3):
         if col == 0 and row == 1:
             plt.ylabel('States', fontsize = 14, labelpad=15)
         ax_ind=ax_ind+1
-        
-        if col==8 and row == 0 and stateN != 6:
-            plt.text(0.95,.16, '10')
-        if col==8 and row == 0 and stateN == 6:
-            plt.text(0.95,-.21, '10')
-        
-#Save and print a message
 
+#All done! Save graph.
 plt.savefig(output_file_name, bbox_inches='tight', dpi=250)       
 plt.close()
