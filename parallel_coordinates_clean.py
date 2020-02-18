@@ -82,19 +82,19 @@ if stateN == 3:
     states_dict   = states3_dict
     state_input_file_name = 'ClusterDataMoreStates/3states.csv'
     state_num_tag         = "threeStates"
-    output_file_name      = "ClusterDataMoreStates/Figures/PCoords3States.pdf"
+    output_file_name      = "ClusterDataMoreStates/Figures/PCoords3States"
 elif stateN == 6:
     states_labels = states6_labels
     states_dict   = states6_dict
     state_input_file_name = 'ClusterDataMoreStates/6states.csv'
     state_num_tag         = "sixStates"
-    output_file_name      = "ClusterDataMoreStates/Figures/PCoords6States.pdf"
+    output_file_name      = "ClusterDataMoreStates/Figures/PCoords6States"
 elif stateN == 9:
     states_labels = states9_labels
     states_dict   = states9_dict
     state_input_file_name = 'ClusterDataMoreStates/9states.csv'
     state_num_tag         = "nineStates"
-    output_file_name      = "ClusterDataMoreStates/Figures/PCoords9States.pdf"
+    output_file_name      = "ClusterDataMoreStates/Figures/PCoords9States"
 else:
     print("Error: only implemented state numbers are 3, 6, and 9.")
 
@@ -263,32 +263,49 @@ for row in np.arange(0,3):
         for lasso_ind in lasso_data_mod.index:
             lasso_tuple = lasso_data.loc[lasso_ind]
             #If not significant, make it hollow, otherwise it's full.
-            if lasso_tuple['p'] >= 0.05:
+            if lasso_tuple['p'] > 0.05:
                 fill_type='none'
-                marker = 'o'
+                marker_type = '^'
 #                linestyle = ":"
-            if lasso_tuple['p'] < 0.05:
-                marker = '*'
-            if lasso_tuple['p'] < 0.01:
-                marker = 'D'
-            else:
+            if lasso_tuple['p'] <= 0.05:
+                marker_type = 's'
                 fill_type='full'
-                linestyle = "-"
+            if lasso_tuple['p'] < 0.01:
+                marker_type = 'o'
+                fill_type='full'
+#            else:
+#                fill_type='full'
+#                linestyle = "-"
+#                marker_type = 'D'
             state_rank = states_dict[lasso_tuple['statename']]
             dot_color = "#7570b3" if lasso_tuple['e'] < 0 else "#1b9e77"
             ax_list[ax_ind].plot([0.001],[state_rank],
                        color=dot_color,
                        fillstyle=fill_type,
                        markersize=7,
-                       linestyle=linestyle,
-                       marker=marker)
+#                       linestyle=linestyle,
+                       marker=marker_type)
             if col>0:
+                if lasso_tuple['p'] > 0.05:
+                    fill_type='none'
+                    marker_type = '^'
+    #                linestyle = ":"
+                if lasso_tuple['p'] <= 0.05:
+                    marker_type = 's'
+                    fill_type='full'
+                if lasso_tuple['p'] < 0.01:
+                    marker_type = 'o'
+                    fill_type='full'
+#                else:
+#                    fill_type='full'
+#                    linestyle = "-"
+#                    marker_type = 'D'
                 ax_list[ax_ind-1].plot([0.999],[state_rank],
                            color=dot_color,
                            fillstyle=fill_type,
                            markersize=7,
-                           linestyle=linestyle,
-                           marker=marker)
+#                           linestyle=linestyle,
+                           marker=marker_type)
             
         #Catch for m10, since we'll never actually reach it otherwise. After
         #doing the dots for module 9, do the dots for module 10.
@@ -299,17 +316,25 @@ for row in np.arange(0,3):
                 #If not significant, make it hollow, otherwise it's full.
                 if lasso_tuple['p'] > 0.05:
                     fill_type='none'
-                    linestyle = ":"
-                else:
+                    marker = '^'
+    #                linestyle = ":"
+                if lasso_tuple['p'] <= 0.05:
+                    marker = 's'
                     fill_type='full'
-                    linestyle = "-"
+                if lasso_tuple['p'] < 0.01:
+                    marker = 'o'
+                    fill_type='full'
+#                else:
+#                    fill_type='full'
+#                    linestyle = "-"
+#                    marker = 'D'
                 state_rank = states_dict[lasso_tuple['statename']]
                 dot_color = "#7570b3" if lasso_tuple['e'] < 0 else "#1b9e77"
                 ax_list[ax_ind].plot([0.999],[state_rank],
                            color=dot_color,
                            markersize=7,
                            fillstyle=fill_type,
-                           linestyle=linestyle,
+#                           linestyle=linestyle,
                            marker=marker)
         
         #Now plot the rankings
@@ -341,8 +366,10 @@ for row in np.arange(0,3):
             plt.xlabel('Module Number', fontsize = 14, labelpad=20)
         if col == 0 and row == 1:
             plt.ylabel('States', fontsize = 14, labelpad=15)
+            
         ax_ind=ax_ind+1
 
 #All done! Save graph.
-plt.savefig(output_file_name, bbox_inches='tight', dpi=250)       
+plt.savefig(output_file_name+'.pdf', bbox_inches='tight', dpi=250)       
+plt.savefig(output_file_name+'.png', bbox_inches='tight', dpi=250)       
 plt.close()
